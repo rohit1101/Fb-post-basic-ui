@@ -7,7 +7,21 @@
 }
 
 .dropdown {
+  position: relative;
+  overflow: auto;
   width: 256px;
   height: 400px;
-  background-color: rebeccapurple;
+  background-color: hsla(137, 0%, 87%, 1);
+}
+
+.dropdownContent {
+  padding: 0.8rem 0px;
+  width: 220px;
+  margin: 0 auto;
+}
+
+.trendImg {
+  padding: 0.3rem 0;
+  width: 220px;
+  height: 120px;
 }

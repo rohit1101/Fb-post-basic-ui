@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getTrendingGifs } from "./apis/getTrendingGifs";
+import { getTrendingGifs } from "./services/api";
 import "./App.css";
 import { apiKey, baseURL } from "./constants";
 
@@ -9,6 +9,7 @@ export default function App() {
   const [gifBtn, setGifBtn] = useState(false);
   const [trending, setTrending] = useState([]);
   // const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
 
   const handleTextInp = (e) => {
@@ -17,7 +18,6 @@ export default function App() {
 
   const handleGifInp = async (e) => {
     setQuery(e.target.value);
-
     const results = await fetch(
       `${baseURL}${apiKey}&q=${query}&limit=5&offset=0&rating=g&lang=en`
     );
@@ -70,7 +70,20 @@ export default function App() {
               >
                 x
               </button>
-              <div></div>
+              <div className="dropdownContent">
+                {trending.map((trend) => {
+                  return (
+                    <div key={trend.id} className="trendImg">
+                      <img
+                        className="trendImg"
+                        // style={{ width: "220px", height: "120px" }}
+                        src={trend.images.fixed_width_downsampled.url}
+                        alt={trend.id}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : null}
         </div>
