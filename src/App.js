@@ -1,14 +1,14 @@
 import { useState } from "react";
-import "./styles.css";
+import './App.css';
+import { apiKey, baseURL } from "./constants";
 
 export default function App() {
-  const [inpVal, setInpVal] = useState();
+  const [inpVal, setInpVal] = useState('');
   const [query, setQuery] = useState();
   const [gifBtn, setGifBtn] = useState(false);
   const [posts, setPosts] = useState([]);
 
-  const baseURL = `https://api.giphy.com/v1/gifs/search?`;
-  const apiKey = `api_key=zPVSPYksxDsaKTixDPuXVRQ01Wn0HCLZ`;
+  
 
   const handleTextInp = (e) => {
     setInpVal(e.target.value);
@@ -16,7 +16,7 @@ export default function App() {
 
   const handleGifInp = async (e) => {
     setQuery(e.target.value);
-
+  
     const results = await fetch(
       `${baseURL}${apiKey}&q=${query}&limit=5&offset=0&rating=g&lang=en`
     );
@@ -51,6 +51,7 @@ export default function App() {
             type="text"
             value={query}
             placeholder="Search gifs"
+            onFocus={(e)=> console.log('focussed')}
             onChange={handleGifInp}
           />
           <button
