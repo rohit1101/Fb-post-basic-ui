@@ -1,14 +1,15 @@
 import { useState } from "react";
-import './App.css';
+import { getTrendingGifs } from "./apis/getTrendingGifs";
+import "./App.css";
 import { apiKey, baseURL } from "./constants";
 
 export default function App() {
-  const [inpVal, setInpVal] = useState('');
+  const [inpVal, setInpVal] = useState("");
   const [query, setQuery] = useState();
   const [gifBtn, setGifBtn] = useState(false);
-  const [posts, setPosts] = useState([]);
-
-  
+  const [trending, setTrending] = useState([]);
+  // const [posts, setPosts] = useState([]);
+  const [showDropDown, setShowDropDown] = useState(false);
 
   const handleTextInp = (e) => {
     setInpVal(e.target.value);
@@ -16,7 +17,7 @@ export default function App() {
 
   const handleGifInp = async (e) => {
     setQuery(e.target.value);
-  
+
     const results = await fetch(
       `${baseURL}${apiKey}&q=${query}&limit=5&offset=0&rating=g&lang=en`
     );
@@ -43,33 +44,36 @@ export default function App() {
         GIFS
       </button>
       {gifBtn ? (
-        <>
+        <div className="App">
           <label style={{ display: "block", padding: "1rem 0" }}>
             Add a gif for a final touch!
           </label>
           <input
+            style={{ width: "250px" }}
             type="text"
             value={query}
             placeholder="Search gifs"
-            onFocus={(e)=> console.log('focussed')}
+            onFocus={(e) => {
+              setShowDropDown(true);
+              getTrendingGifs().then((res) => setTrending(res.data));
+            }}
             onChange={handleGifInp}
           />
-          <button
-            style={{ display: "block", padding: "0 1rem", margin: "1rem 0" }}
-            onClick={() => setGifBtn(false)}
-          >
-            Cancel
-          </button>
-          <button
-            style={{ display: "block", padding: "0 1rem" }}
-            onClick={() => {
-              setGifBtn(false);
-              setQuery("");
-            }}
-          >
-            Add GIF
-          </button>
-        </>
+          {showDropDown ? (
+            <div className="dropdown">
+              <button
+                onClick={() => {
+                  setGifBtn(false);
+                  setShowDropDown(false);
+                }}
+                style={{ float: "right" }}
+              >
+                x
+              </button>
+              <div></div>
+            </div>
+          ) : null}
+        </div>
       ) : null}
       <button
         disabled={Boolean(inpVal.length) ? false : true}
