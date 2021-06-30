@@ -7,8 +7,7 @@
 }
 
 .dropdown {
-  position: relative;
-  overflow: auto;
+  overflow-y: scroll;
   width: 256px;
   height: 400px;
   background-color: hsla(137, 0%, 87%, 1);

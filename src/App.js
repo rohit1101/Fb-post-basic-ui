@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getTrendingGifs } from "./services/api";
 import "./App.css";
 import { apiKey, baseURL } from "./constants";
+import Label from "./Components/Label/Label";
 
 export default function App() {
   const [inpVal, setInpVal] = useState("");
@@ -28,9 +29,8 @@ export default function App() {
   return (
     <div className="App">
       <h1>Create a new Post</h1>
-      <label style={{ display: "block", padding: "1rem 0" }}>
-        Add a new post
-      </label>
+
+      <Label value="Add a new post" />
       <input
         type="text"
         value={inpVal}
@@ -48,6 +48,7 @@ export default function App() {
           <label style={{ display: "block", padding: "1rem 0" }}>
             Add a gif for a final touch!
           </label>
+          <Label value="Add a gif for a final touch!" />
           <input
             style={{ width: "250px" }}
             type="text"
