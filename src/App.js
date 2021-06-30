@@ -15,7 +15,7 @@ export default function App() {
   const [img, setImg] = useState([]);
   const [status, setStatus] = useState([]);
   // const [isPreview, setIsPreview] = useState(true);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showDropDown, setShowDropDown] = useState(false);
 
   useEffect(() => {
@@ -33,7 +33,9 @@ export default function App() {
     if (!e.target.value.length) {
       setQuery("");
       setPosts([]);
+      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleAddStatus = () => {
@@ -56,6 +58,21 @@ export default function App() {
     setStatus(updatedStatus);
     localStorage.setItem("fbPosts", JSON.stringify(updatedStatus));
   };
+
+  function debounce(fn, delay) {
+    let timer;
+
+    return function (...args) {
+      clearTimeout(timer);
+      const [e] = args;
+      setQuery(e.target.value);
+      timer = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    };
+  }
+
+  const gifHandler = debounce(handleGifInp, 2000);
 
   return (
     <div className="App">
@@ -85,8 +102,9 @@ export default function App() {
             query={query}
             placeholder="Search gifs"
             setShowDropDown={setShowDropDown}
-            handleGifInp={handleGifInp}
+            handleGifInp={gifHandler}
             setTrending={setTrending}
+            debounce={debounce}
           />
           {showDropDown ? (
             <div className="dropdown">
@@ -105,6 +123,7 @@ export default function App() {
                   ? posts.map((post) => {
                       return (
                         <DropDownContent
+                          loading={loading}
                           type="post"
                           post={post}
                           img={img}

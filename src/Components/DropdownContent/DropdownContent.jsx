@@ -1,20 +1,24 @@
-const DropDownContent = ({ post, img, setImg, type }) => {
+const DropDownContent = ({ post, img, setImg, type, loading }) => {
   return (
     <>
       {type === "post" ? (
-        <div className="trendImg">
-          <img
-            className="trendImg"
-            src={post.images.fixed_width_downsampled.url}
-            alt={post.id}
-            onClick={() => {
-              let selectedImg = [...img];
-              selectedImg.push(post.images.fixed_width_downsampled.url);
+        loading ? (
+          "loading..."
+        ) : (
+          <div className="trendImg">
+            <img
+              className="trendImg"
+              src={post.images.fixed_width_downsampled.url}
+              alt={post.id}
+              onClick={() => {
+                let selectedImg = [...img];
+                selectedImg.push(post.images.fixed_width_downsampled.url);
 
-              setImg(selectedImg);
-            }}
-          />
-        </div>
+                setImg(selectedImg);
+              }}
+            />
+          </div>
+        )
       ) : (
         <div key={post.id} className="trendImg">
           <img
