@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { getGifs, getTrendingGifs } from "./services/api";
+import { getGifs } from "./services/api";
 import "./App.css";
 import Label from "./Components/Label/Label";
 import DropDownContent from "./Components/DropdownContent/DropdownContent";
 import Posts from "./Components/Posts/Posts";
+import InputField from "./Components/Input/InputField";
 
 export default function App() {
   const [inpVal, setInpVal] = useState("");
@@ -13,7 +14,7 @@ export default function App() {
   const [posts, setPosts] = useState([]);
   const [img, setImg] = useState([]);
   const [status, setStatus] = useState([]);
-  const [isPreview, setIsPreview] = useState(true);
+  // const [isPreview, setIsPreview] = useState(true);
   // const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
 
@@ -61,11 +62,12 @@ export default function App() {
       <h1>Create a new Post</h1>
 
       <Label title="Add a new post" />
-      <input
-        type="text"
-        value={inpVal}
+
+      <InputField
+        inpVal={inpVal}
         placeholder="What's on your mind ?"
-        onChange={handleTextInp}
+        title="post"
+        handleTextInp={handleTextInp}
       />
       <button
         style={{ display: "block", padding: "0 1rem", margin: "1rem 0" }}
@@ -77,16 +79,14 @@ export default function App() {
       {gifBtn ? (
         <div className="App">
           <Label title="Add a gif for a final touch!" />
-          <input
-            style={{ width: "250px" }}
-            type="text"
-            value={query}
+
+          <InputField
+            title="gif"
+            query={query}
             placeholder="Search gifs"
-            onFocus={(e) => {
-              setShowDropDown(true);
-              getTrendingGifs().then((res) => setTrending(res.data));
-            }}
-            onChange={handleGifInp}
+            setShowDropDown={setShowDropDown}
+            handleGifInp={handleGifInp}
+            setTrending={setTrending}
           />
           {showDropDown ? (
             <div className="dropdown">
@@ -135,6 +135,7 @@ export default function App() {
         <div>
           {status.map((item, index) => (
             <Posts
+              key={index}
               item={item}
               index={index}
               handleStatusDelete={handleStatusDelete}

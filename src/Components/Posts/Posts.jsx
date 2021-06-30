@@ -1,6 +1,6 @@
 const Posts = ({ index, item, handleStatusDelete }) => {
   return (
-    <div key={index} className="card">
+    <div className="card">
       <button
         onClick={() => handleStatusDelete(index)}
         style={{ float: "right" }}
