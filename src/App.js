@@ -1,10 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getGifs } from "./services/api";
 import "./App.css";
 import Label from "./Components/Label/Label";
 import DropDownContent from "./Components/DropdownContent/DropdownContent";
 import Posts from "./Components/Posts/Posts";
 import InputField from "./Components/Input/InputField";
+
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
 
 export default function App() {
   const [inpVal, setInpVal] = useState("");
@@ -14,7 +25,6 @@ export default function App() {
   const [posts, setPosts] = useState([]);
   const [img, setImg] = useState([]);
   const [status, setStatus] = useState([]);
-  // const [isPreview, setIsPreview] = useState(true);
   const [loading, setLoading] = useState(true);
   const [showDropDown, setShowDropDown] = useState(false);
 
@@ -23,19 +33,8 @@ export default function App() {
     setStatus(onMount);
   }, []);
 
-  const handleTextInp = async (e) => {
+  const handleTextInp = (e) => {
     setInpVal(e.target.value);
-  };
-
-  const handleGifInp = (e) => {
-    setQuery(e.target.value);
-    getGifs(query).then((res) => setPosts(res.data));
-    if (!e.target.value.length) {
-      setQuery("");
-      setPosts([]);
-      setLoading(false);
-    }
-    setLoading(false);
   };
 
   const handleAddStatus = () => {
@@ -45,7 +44,7 @@ export default function App() {
     };
     setStatus([message, ...status]);
     localStorage.setItem("fbPosts", JSON.stringify([message, ...status]));
-    console.log(message);
+
     setShowDropDown(false);
     setGifBtn(false);
     setImg([]);
@@ -59,20 +58,27 @@ export default function App() {
     localStorage.setItem("fbPosts", JSON.stringify(updatedStatus));
   };
 
-  function debounce(fn, delay) {
-    let timer;
+  const makeNetworkCall = (queryText) => {
+    if (!queryText) {
+      setPosts([]);
+      return;
+    }
+    getGifs(queryText)
+      .then((res) => {
+        setPosts(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handler = (e) => {
+    const { value } = e.target;
+    setQuery(value);
+    debouncedFn(value);
+  };
 
-    return function (...args) {
-      clearTimeout(timer);
-      const [e] = args;
-      setQuery(e.target.value);
-      timer = setTimeout(() => {
-        fn(...args);
-      }, delay);
-    };
-  }
-
-  const gifHandler = debounce(handleGifInp, 2000);
+  const debouncedFn = useMemo(() => debounce(makeNetworkCall, 1000), []);
 
   return (
     <div className="App">
@@ -86,15 +92,25 @@ export default function App() {
         title="post"
         handleTextInp={handleTextInp}
       />
+
       <button
         style={{ display: "block", padding: "0 1rem", margin: "1rem 0" }}
         onClick={() => setGifBtn(true)}
       >
-        GIFS
+        Add Gifs
       </button>
 
       {gifBtn ? (
         <div className="App">
+          <button
+            style={{ display: "block", padding: "0 1rem", margin: "1rem 0" }}
+            onClick={() => {
+              setGifBtn(false);
+              setQuery("");
+            }}
+          >
+            Cancel
+          </button>
           <Label title="Add a gif for a final touch!" />
 
           <InputField
@@ -102,15 +118,14 @@ export default function App() {
             query={query}
             placeholder="Search gifs"
             setShowDropDown={setShowDropDown}
-            handleGifInp={gifHandler}
+            handleGifInp={handler}
             setTrending={setTrending}
-            debounce={debounce}
           />
           {showDropDown ? (
             <div className="dropdown">
               <button
                 onClick={() => {
-                  setGifBtn(false);
+                  // setGifBtn(false);
                   setShowDropDown(false);
                   setQuery("");
                 }}
